@@ -44,5 +44,20 @@ namespace GhostGame.Tests
             Assert.IsTrue(node.Children.Count == 2);
             Assert.IsFalse(node.IsLeafNode);
         }
+
+        [TestMethod]
+        public void AddWordDoesNotAddANewChildToTheNodeIfItsNotLongerThan2Characters()
+        {
+            string testWord = "test";
+            string newWord = "t";
+
+            TreeNode node = new TreeNode(testWord);
+            bool result = node.AddWord(newWord);
+
+            Assert.IsFalse(result);
+            Assert.AreEqual(testWord.First(), node.Value);
+            Assert.IsTrue(node.Children.Count == 1);
+            Assert.IsFalse(node.IsLeafNode);
+        }
     }
 }

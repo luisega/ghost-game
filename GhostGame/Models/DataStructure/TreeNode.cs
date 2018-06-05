@@ -3,12 +3,12 @@ using System.Linq;
 
 namespace GhostGame
 {
-    internal class TreeNode
+    public class TreeNode
     {
         internal char Value { get; }
-        internal Dictionary<char, TreeNode> Children { get; private set; }
+        internal Dictionary<char, TreeNode> Children { get; }
 
-        internal bool IsLeafNode { get { return !Children.Any(); } }
+        internal bool IsLeafNode => !Children.Any();
 
         internal TreeNode(string nodeWord)
         {
@@ -29,16 +29,25 @@ namespace GhostGame
                 return false;
             }
 
-            char wordToAddFirstCharacter = wordToAdd.FirstOrDefault();
             string wordToAddWithoutFirstCharacter = wordToAdd.Substring(1);
+            char wordToAddSecondCharacter = wordToAddWithoutFirstCharacter.FirstOrDefault();
 
-            if (Children.TryGetValue(wordToAddFirstCharacter, out TreeNode nextNode))
+            //if (wordToAddFirstCharacter == Value)
+            //{
+            //    AddWord(wordToAddWithoutFirstCharacter);
+            //    return true;
+            //}
+
+            //Children.Add(wordToAddFirstCharacter, new TreeNode(wordToAdd));
+            //return true;
+
+            if (Children.TryGetValue(wordToAddSecondCharacter, out TreeNode nextNode))
             {
                 nextNode.AddWord(wordToAddWithoutFirstCharacter);
                 return true;
             }
 
-            Children.Add(wordToAddFirstCharacter, new TreeNode(wordToAddWithoutFirstCharacter));
+            Children.Add(wordToAddSecondCharacter, new TreeNode(wordToAddWithoutFirstCharacter));
             return true;
         }
 
