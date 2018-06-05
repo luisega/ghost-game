@@ -24,7 +24,7 @@ namespace GhostGame.Controllers
         [HttpGet("[action]")]
         public IEnumerable<WeatherForecast> WeatherForecasts(int startDateIndex)
         {
-            WordTree tree = new WordTree(_configuration);
+            WordTreeManager tree = new WordTreeManager(_configuration);
             var rng = new Random();
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
