@@ -1,0 +1,28 @@
+@import '../../ghost-common';
+
+.ghost-letter-btn {
+    color: $color-darkerblue;
+    background-color: $color-gray-12;
+    width: 14.28%;
+    height: 40px;
+
+    &:hover{
+        color: $color-white;
+        background-color: $color-darkblue;
+        border-radius: 0;
+    }
+}
+
+.ghost-btn-group {
+    color: $color-white;
+    border-radius: 0;
+    width: 100%;
+}
+
+.ghost-btn-group-last {
+    color: $color-white;
+    border-radius: 0;
+    margin-left: 14.28%;
+    margin-bottom: 40px;
+    width: 100%;
+}

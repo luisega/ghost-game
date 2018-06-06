@@ -1,76 +1,44 @@
-const path = require('path');
-const webpack = require('webpack');
+'use strict';
+
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const CheckerPlugin = require('awesome-typescript-loader').CheckerPlugin;
-const merge = require('webpack-merge');
 
-module.exports = (env) => {
-    const isDevBuild = !(env && env.prod);
+var bundleFileName = 'bundle',
+	appFileName = 'index',
+	paths = {
+		webroot: __dirname + '/wwwroot/',
+		approot: __dirname + '/ClientApp/'
+	};
 
-    // Configuration in common to both client-side and server-side bundles
-    const sharedConfig = () => ({
-        stats: { modules: false },
-        resolve: { extensions: ['.js', '.jsx', '.ts', '.tsx'] },
-        output: {
-            filename: '[name].js',
-            publicPath: 'dist/' // Webpack dev middleware, if enabled, handles requests for this URL prefix
-        },
-        module: {
-            rules: [
-                { test: /\.tsx?$/, include: /ClientApp/, use: 'awesome-typescript-loader?silent=true' },
-                { test: /\.(png|jpg|jpeg|gif|svg)$/, use: 'url-loader?limit=25000' }
-            ]
-        },
-        plugins: [new CheckerPlugin()]
-    });
-
-    // Configuration for client-side bundle suitable for running in browsers
-    const clientBundleOutputDir = './wwwroot/dist';
-    const clientBundleConfig = merge(sharedConfig(), {
-        entry: { 'main-client': './ClientApp/boot-client.tsx' },
-        module: {
-            rules: [
-                { test: /\.css$/, use: ExtractTextPlugin.extract({ use: isDevBuild ? 'css-loader' : 'css-loader?minimize' }) }
-            ]
-        },
-        output: { path: path.join(__dirname, clientBundleOutputDir) },
-        plugins: [
-            new ExtractTextPlugin('site.css'),
-            new webpack.DllReferencePlugin({
-                context: __dirname,
-                manifest: require('./wwwroot/dist/vendor-manifest.json')
-            })
-        ].concat(isDevBuild ? [
-            // Plugins that apply in development builds only
-            new webpack.SourceMapDevToolPlugin({
-                filename: '[file].map', // Remove this line if you prefer inline source maps
-                moduleFilenameTemplate: path.relative(clientBundleOutputDir, '[resourcePath]') // Point sourcemap entries to the original file locations on disk
-            })
-        ] : [
-            // Plugins that apply in production builds only
-            new webpack.optimize.UglifyJsPlugin()
-        ])
-    });
-
-    // Configuration for server-side (prerendering) bundle suitable for running in Node
-    const serverBundleConfig = merge(sharedConfig(), {
-        resolve: { mainFields: ['main'] },
-        entry: { 'main-server': './ClientApp/boot-server.tsx' },
-        plugins: [
-            new webpack.DllReferencePlugin({
-                context: __dirname,
-                manifest: require('./ClientApp/dist/vendor-manifest.json'),
-                sourceType: 'commonjs2',
-                name: './vendor'
-            })
-        ],
-        output: {
-            libraryTarget: 'commonjs',
-            path: path.join(__dirname, './ClientApp/dist')
-        },
-        target: 'node',
-        devtool: 'inline-source-map'
-    });
-
-    return [clientBundleConfig, serverBundleConfig];
+module.exports = {
+	entry: {
+		bundle: paths.approot + 'src/' + appFileName
+	},
+	output: {
+		path: paths.webroot + 'js/',
+		filename: bundleFileName + '.js'
+	},
+	module: {
+		rules: [
+			{
+				test: /\.(js|jsx)?$/,
+				use: {
+					loader: 'babel-loader',
+					options: {
+						presets: ['env', 'react']
+					}
+				}
+			},
+			{
+				test: /\.(css|scss)$/,
+				use: ExtractTextPlugin.extract({
+					fallback: 'style-loader',
+					//resolve-url-loader may be chained before sass-loader if necessary
+					use: ['css-loader', 'sass-loader']
+				})
+			}
+		]
+	},
+	plugins: [
+		new ExtractTextPlugin('../css/' + bundleFileName + '.css')
+	]
 };

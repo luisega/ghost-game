@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace GhostGame
+﻿namespace GhostGame
 {
     public interface IWordTreeManager
     {

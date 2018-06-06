@@ -46,6 +46,22 @@ namespace GhostGame.Tests
         }
 
         [TestMethod]
+        public void AddWordAddsANewChildToTheNodeIfItsSecondCharacterIsAlreadyRegistered()
+        {
+            string testWord = "test";
+            string newWord = "team";
+
+            TreeNode node = new TreeNode(testWord);
+            bool result = node.AddWord(newWord);
+
+            Assert.IsTrue(result);
+            Assert.AreEqual(testWord.First(), node.Value);
+            Assert.IsTrue(node.Children.Count == 1);
+            Assert.IsTrue(node.Children.First().Value.Children.Count == 2);
+            Assert.IsFalse(node.IsLeafNode);
+        }
+
+        [TestMethod]
         public void AddWordDoesNotAddANewChildToTheNodeIfItsNotLongerThan2Characters()
         {
             string testWord = "test";
@@ -58,6 +74,30 @@ namespace GhostGame.Tests
             Assert.AreEqual(testWord.First(), node.Value);
             Assert.IsTrue(node.Children.Count == 1);
             Assert.IsFalse(node.IsLeafNode);
+        }
+
+        [TestMethod]
+        public void GetMaximumLengthReachableReturnsChildDepth()
+        {
+            string testWord = "test";
+
+            TreeNode node = new TreeNode(testWord);
+            int result = node.GetMaximumWordLengthReachable();
+
+            Assert.AreEqual(testWord.Length, result);
+        }
+
+        [TestMethod]
+        public void GetMaximumLengthReachableReturnsLongestChildDepth()
+        {
+            string testWord = "test";
+            string newWord = "tomorrow";
+
+            TreeNode node = new TreeNode(testWord);
+            node.AddWord(newWord);
+            int result = node.GetMaximumWordLengthReachable();
+
+            Assert.AreEqual(newWord.Length, result);
         }
     }
 }

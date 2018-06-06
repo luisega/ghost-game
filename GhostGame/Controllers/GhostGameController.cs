@@ -7,13 +7,11 @@ namespace GhostGame.Controllers
     [Route("api/[controller]")]
     public class GhostGameController : Controller
     {
-        private readonly ILogger _logger;
         private readonly IWordTreeManager _wordTreeManager;
 
         public GhostGameController(IWordTreeManager wordTreeManager)
         {
             _wordTreeManager = wordTreeManager;
-            //_logger = logger;
         }
 
         [HttpPost]
@@ -45,7 +43,6 @@ namespace GhostGame.Controllers
         protected internal ObjectResult CreateAndLogInternalServerError(Exception exception)
         {
             string msg = exception.Message;
-            //_logger.LogError(msg);
             return StatusCode(500, msg);
         }
     }

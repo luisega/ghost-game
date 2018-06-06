@@ -1,24 +1,22 @@
-﻿using System;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace GhostGame
 {
     public class WordTreeManager : IWordTreeManager
     {
-        private const string WordNotFoundMessage = "The selected word does not exist in the dictionary";
-        private const string WordFinishedByComputerMessage = "The selected word has been finished by the server";
-        private const string WordFinishedByUserMessage = "The selected word has been finished by the user";
+        private const string WordNotFoundMessage = "You lost. The selected word does not exist in the dictionary. Press 'Reset game' to try again.";
+        private const string WordFinishedByComputerMessage = "You won!!! Press 'Reset game' to start a new game. ";
+        private const string WordFinishedByUserMessage = "You lost. You have finished a valid word. Press 'Reset game' to try again.";
 
         private readonly IDictionary<char, TreeNode> _parentNodes;
 
         public TreeNode LastSelectedNode { get; set; }
 
-        public WordTreeManager(IConfiguration configuration)
+        public WordTreeManager(IWordsProvider wordsProvider, IConfiguration configuration)
         {
-            _parentNodes = CreateNodesFromDictionaryFile(configuration["DictionaryFileLocation"]);
+            _parentNodes = wordsProvider.CreateNodesFromDictionaryFile(configuration["DictionaryFileLocation"]);
         }
 
         public GhostGameResponseDto GetNextMovement(string currentWord)
@@ -30,6 +28,7 @@ namespace GhostGame
                 return new GhostGameResponseDto
                 {
                     GameStatus = GameStatus.ComputerWon,
+                    CurrentWord = currentWord,
                     Message = WordNotFoundMessage
                 };
             }
@@ -38,6 +37,7 @@ namespace GhostGame
                 return new GhostGameResponseDto
                 {
                     GameStatus = GameStatus.ComputerWon,
+                    CurrentWord = currentWord,
                     Message = WordFinishedByUserMessage
                 };
             }
@@ -50,16 +50,16 @@ namespace GhostGame
                 return new GhostGameResponseDto
                 {
                     GameStatus = GameStatus.HumanPlayerWon,
-                    NextLetter = nextNode.Value,
+                    CurrentWord = currentWord + nextNode.Value,
                     Message = WordFinishedByComputerMessage
-
                 };
             }
 
             return new GhostGameResponseDto
             {
                 GameStatus = GameStatus.Playing,
-                NextLetter = nextNode.Value
+                CurrentWord = currentWord + nextNode.Value,
+                Message = $"The server selected the character '{nextNode.Value.ToString().ToUpper()}'. Your turn..."
             };
         }
 
@@ -129,31 +129,5 @@ namespace GhostGame
 
             return currentNode;
         }
-
-        #region Private helpers
-
-        private static IDictionary<char, TreeNode> CreateNodesFromDictionaryFile(string dictionaryRoute)
-        {
-            string word;
-            Dictionary<char, TreeNode> treeNodesRead = new Dictionary<char, TreeNode>();
-
-            StreamReader file = new StreamReader(dictionaryRoute);
-            while ((word = file.ReadLine()) != null)
-            {
-                char wordFirstCharacter = word.First();
-
-                if (treeNodesRead.ContainsKey(wordFirstCharacter))
-                {
-                    treeNodesRead[wordFirstCharacter].AddWord(word);
-                    continue;
-                }
-                treeNodesRead.Add(wordFirstCharacter, new TreeNode(word));
-            }
-
-            return treeNodesRead;
-        }
-
-        #endregion
-
     }
 }

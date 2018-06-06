@@ -1,0 +1,51 @@
+{
+  "env": {
+      "browser": true,
+      "es6": true,
+      "jest/globals": true,
+      "node": true
+  },
+  "extends": [
+      "eslint:recommended",
+      "plugin:react/recommended"
+      ],
+  "parserOptions": {
+      "ecmaFeatures": {
+          "experimentalObjectRestSpread": true,
+          "jsx": true
+      },
+      "sourceType": "module"
+  },
+  "plugins": [
+      "react",
+      "jest"
+  ],
+  "rules": {
+      "indent": [
+          "error",
+          "tab"
+      ],
+      "linebreak-style": [
+          "error",
+          "windows"
+      ],
+      "quotes": [
+          "error",
+          "single"
+      ],
+      "semi": [
+          "error",
+          "always"
+      ],
+      "react/prop-types": [
+          0
+      ]
+  },
+  "globals": {
+      "global": true,
+      "shallow": true,
+      "mount": true,
+      "renderer": true,
+      "render": true
+    }
+}

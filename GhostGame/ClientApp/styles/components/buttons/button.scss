@@ -1,0 +1,22 @@
+@import '../../ghost-common';
+
+.ghost-btn-label {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.ghost-btn {
+    color: $color-white;
+    background-color: $color-blue;
+    
+    &:hover,
+    &:focus {
+        color: $color-white;
+        background-color: $color-darkblue;
+    }
+
+    &:active {
+        color: $color-white;
+        background-color: $color-darkerblue;
+    }
+}

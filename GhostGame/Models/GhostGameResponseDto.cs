@@ -8,7 +8,7 @@ namespace GhostGame
         [JsonConverter(typeof(StringEnumConverter))]
         public GameStatus GameStatus { get; set; }
 
-        public char NextLetter { get; set; }
+        public string CurrentWord { get; set; }
 
         public string Message { get; set; }
     }

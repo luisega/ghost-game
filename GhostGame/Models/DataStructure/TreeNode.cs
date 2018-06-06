@@ -32,15 +32,6 @@ namespace GhostGame
             string wordToAddWithoutFirstCharacter = wordToAdd.Substring(1);
             char wordToAddSecondCharacter = wordToAddWithoutFirstCharacter.FirstOrDefault();
 
-            //if (wordToAddFirstCharacter == Value)
-            //{
-            //    AddWord(wordToAddWithoutFirstCharacter);
-            //    return true;
-            //}
-
-            //Children.Add(wordToAddFirstCharacter, new TreeNode(wordToAdd));
-            //return true;
-
             if (Children.TryGetValue(wordToAddSecondCharacter, out TreeNode nextNode))
             {
                 nextNode.AddWord(wordToAddWithoutFirstCharacter);
@@ -53,11 +44,11 @@ namespace GhostGame
 
         internal int GetMaximumWordLengthReachable()
         {
-            int maximumLengthReached = 0;
+            int maximumLengthReached = 1;
 
             foreach (TreeNode childNode in Children.Values)
             {
-                int childLength = childNode.GetMaximumWordLengthReachable();
+                int childLength = childNode.GetMaximumWordLengthReachable() + 1;
                 if (maximumLengthReached < childLength)
                 {
                     maximumLengthReached = childLength;
