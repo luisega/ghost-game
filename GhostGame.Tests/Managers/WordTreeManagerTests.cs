@@ -29,11 +29,16 @@ namespace GhostGame.Tests
             tNode.AddWord("tastings");
 
             TreeNode gNode = new TreeNode("game");
+            gNode.AddWord("go");
+            gNode.AddWord("get");
+
+            TreeNode wNode = new TreeNode("we");
 
             _dictionary = new Dictionary<char, TreeNode>
             {
                 { 't', tNode },
-                { 'g', gNode }
+                { 'g', gNode },
+                { 'w', wNode }
             };
 
             var providerMockSetup = new Mock<IWordsProvider>();
@@ -49,16 +54,54 @@ namespace GhostGame.Tests
             Assert.IsNotNull(manager);
         }
 
+        [TestMethod]
+        public void GetNextMovementReturnsAComputerWonResponseIfWordDoesNotExist()
+        {
+            WordTreeManager manager = new WordTreeManager(_providerMock, _configurationMock);
+            GhostGameResponseDto response = manager.GetNextMovement("x");
 
+            Assert.IsNotNull(response);
+            Assert.AreEqual(GameStatus.ComputerWon, response.GameStatus);
+            Assert.IsFalse(string.IsNullOrEmpty(response.Message));
+            Assert.IsFalse(string.IsNullOrEmpty(response.CurrentWord));
+        }
 
+        [TestMethod]
+        public void GetNextMovementReturnsAComputerWonResponseIfWordCompletesATreeBranch()
+        {
+            WordTreeManager manager = new WordTreeManager(_providerMock, _configurationMock);
+            manager.LastSelectedNode = manager.GetCurrentNode("g");
+            GhostGameResponseDto response = manager.GetNextMovement("go");
 
+            Assert.IsNotNull(response);
+            Assert.AreEqual(GameStatus.ComputerWon, response.GameStatus);
+            Assert.IsFalse(string.IsNullOrEmpty(response.Message));
+            Assert.IsFalse(string.IsNullOrEmpty(response.CurrentWord));
+        }
 
+        [TestMethod]
+        public void GetNextMovementReturnsAHumanWonMessageIfTheOnlyOptionLeftIsEndingAWord()
+        {
+            WordTreeManager manager = new WordTreeManager(_providerMock, _configurationMock);
+            GhostGameResponseDto response = manager.GetNextMovement("w");
 
+            Assert.IsNotNull(response);
+            Assert.AreEqual(GameStatus.HumanPlayerWon, response.GameStatus);
+            Assert.IsFalse(string.IsNullOrEmpty(response.Message));
+            Assert.IsFalse(string.IsNullOrEmpty(response.CurrentWord));
+        }
 
+        [TestMethod]
+        public void GetNextMovementReturnsAPlayingMessageIfGameContinues()
+        {
+            WordTreeManager manager = new WordTreeManager(_providerMock, _configurationMock);
+            GhostGameResponseDto response = manager.GetNextMovement("t");
 
-
-
-
+            Assert.IsNotNull(response);
+            Assert.AreEqual(GameStatus.Playing, response.GameStatus);
+            Assert.IsFalse(string.IsNullOrEmpty(response.Message));
+            Assert.IsFalse(string.IsNullOrEmpty(response.CurrentWord));
+        }
 
         [TestMethod]
         public void ResetGameSetsLastSelectedNodeToNull()
@@ -147,10 +190,10 @@ namespace GhostGame.Tests
         {
             WordTreeManager manager = new WordTreeManager(_providerMock, _configurationMock);
 
-            TreeNode nextNode = manager.GetNextNode(manager.GetCurrentNode("g"));
+            TreeNode nextNode = manager.GetNextNode(manager.GetCurrentNode("w"));
 
             Assert.IsNotNull(nextNode);
-            Assert.AreEqual('a', nextNode.Value);
+            Assert.AreEqual('e', nextNode.Value);
         }
     }
 }

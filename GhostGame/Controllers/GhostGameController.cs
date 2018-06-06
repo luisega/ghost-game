@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
 
-namespace GhostGame.Controllers
+namespace GhostGame
 {
     [Route("api/[controller]")]
     public class GhostGameController : Controller
@@ -15,7 +14,7 @@ namespace GhostGame.Controllers
         }
 
         [HttpPost]
-        public ActionResult ProcessPlayerMovement([FromBody]GhostGameRequestDto requestDto)
+        public IActionResult ProcessPlayerMovement([FromBody]GhostGameRequestDto requestDto)
         {
             try
             {
@@ -28,7 +27,7 @@ namespace GhostGame.Controllers
         }
 
         [HttpPost("reset")]
-        public ActionResult ResetGame()
+        public IActionResult ResetGame()
         {
             try
             {

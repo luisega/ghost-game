@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace GhostGame.Controllers
+namespace GhostGame
 {
     public class HomeController : Controller
     {

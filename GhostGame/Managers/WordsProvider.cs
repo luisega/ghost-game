@@ -7,23 +7,34 @@ namespace GhostGame
 {
     public class WordsProvider: IWordsProvider
     {
-        private readonly int _minimumWordLength;
+        internal int MinimumWordLength { get; }
 
         public WordsProvider(IConfiguration configuration)
         {
             int.TryParse(configuration["MinimumWordLength"], out int minimumWordLength);
-            _minimumWordLength = minimumWordLength < 4 ? 4 : minimumWordLength;
+            MinimumWordLength = minimumWordLength < 4 ? 4 : minimumWordLength;
         }
 
-        public IDictionary<char, TreeNode> CreateNodesFromDictionaryFile(string dictionaryRoute)
+        public Dictionary<char, TreeNode> CreateNodesFromDictionaryFile(string dictionaryRoute)
         {
             string word;
+            StreamReader file;
             Dictionary<char, TreeNode> treeNodesRead = new Dictionary<char, TreeNode>();
+            string routeToWordlistFile = string.IsNullOrEmpty(dictionaryRoute) ? 
+                "wordlist.txt" : dictionaryRoute;
 
-            StreamReader file = new StreamReader(dictionaryRoute);
+            try
+            {
+                file = new StreamReader(routeToWordlistFile);
+            }
+            catch (IOException)
+            {
+                return new Dictionary<char, TreeNode>();
+            }
+
             while ((word = file.ReadLine()) != null)
             {
-                if (word.Length < _minimumWordLength)
+                if (word.Length < MinimumWordLength)
                 {
                     continue;
                 }
@@ -35,8 +46,10 @@ namespace GhostGame
                     treeNodesRead[wordFirstCharacter].AddWord(word);
                     continue;
                 }
+
                 treeNodesRead.Add(wordFirstCharacter, new TreeNode(word));
             }
+
 
             return treeNodesRead;
         }

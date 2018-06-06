@@ -4,6 +4,6 @@ namespace GhostGame
 {
     public interface IWordsProvider
     {
-        IDictionary<char, TreeNode> CreateNodesFromDictionaryFile(string dictionaryRoute);
+        Dictionary<char, TreeNode> CreateNodesFromDictionaryFile(string dictionaryRoute);
     }
 }
